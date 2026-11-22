@@ -21,14 +21,29 @@ In `pso_v3.py` (line 46), changed `return self.gbest` to `return self.pbest`.
 ## Issue 4: the sphere crashes on [0, 10]
 
 - Reproduce (the command, and the last line it printed):
+
+python pso_v3.py sphere 2 20 0 10 100 / last line: ZeroDivisionError: division by zero
+
 - Where (the lowest frame: file, line, and the code on that line):
+
+pso_v3.py line 126
 - Hypothesis (one sentence): why is the number you divide by exactly 0?
+
+Because xmin = 0 sits right on sphere's minimum at (0, 0), particles that fly past 0 get clamped to exact 0.0 by np.clip, making the best fitness old = 0.0 20 iterations later and causing ZeroDivisionError
+
+
 - Confirm (an experiment of 1 to 3 lines, and what it printed):
+
+Ran pso_solve('sphere', s, 100, patience=1000) and printed best pbest: [0. 0.] first zero iter: 2
 
 - What should the early stop do when the best value is exactly 0, and stays 0?
 - Fix (the line before, and after):
+
+n pso_v3.py (line 126), changed if (old - history[-1]) / old < tol: to if old == 0 or (old - history[-1]) / old < tol
+
 - Test (its name; it failed before the fix, and passes after):
 
+test_sphere_zero_bound_early_stop in test_pso_v3.py
 
 ## Issue 5: Rastrigin's answer is wrong
 

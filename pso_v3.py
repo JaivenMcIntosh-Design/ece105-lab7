@@ -123,7 +123,7 @@ def pso_solve(function, swarm, max_iter, patience=20, tol=1e-6):
         history.append(float(swarm[gidx].get_fitness()))
         if len(history) > patience:
             old = history[-1 - patience]
-            if (old - history[-1]) / old < tol:
+            if old == 0 or (old - history[-1]) / old < tol:
                 break
         pso_update(swarm)
     return gidx, history
