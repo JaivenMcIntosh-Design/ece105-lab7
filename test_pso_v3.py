@@ -2,7 +2,7 @@
 import numpy as np
 
 from pso_v3 import Particle, pso_get_best, run_pso
-
+from pso_v3 import Particle, pso_get_best, run_pso, rastrigin
 
 def test_booth_finds_minimum():
     x, value, history = run_pso("booth", 2, 20, -10, 10, 100)
@@ -49,3 +49,9 @@ def test_sphere_zero_bound_early_stop():
     x, value, history = run_pso("sphere", 2, 20, 0, 10, 100)
     assert value == 0.0
     assert len(history) < 100    
+
+def test_rastrigin_known_value_and_symmetry():
+    """Issue 5: rastrigin ignored the last coordinate due to range(n - 1)."""
+    assert rastrigin([0.0, 0.0]) == 0.0
+    assert np.isclose(rastrigin([0.0, 1.0]), 1.0)
+    assert np.isclose(rastrigin([1.5, -2.5]), rastrigin([-1.5, 2.5]))  
