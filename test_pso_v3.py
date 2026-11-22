@@ -43,3 +43,9 @@ def test_get_pbest():
     """Issue 3: get_pbest raised AttributeError."""
     p = Particle(2, -10, 10)
     assert np.array_equal(p.get_pbest(), p.pbest)
+
+def test_sphere_zero_bound_early_stop():
+    """Issue 4: sphere on [0, 10] crashed with ZeroDivisionError and should stop early."""
+    x, value, history = run_pso("sphere", 2, 20, 0, 10, 100)
+    assert value == 0.0
+    assert len(history) < 100    
