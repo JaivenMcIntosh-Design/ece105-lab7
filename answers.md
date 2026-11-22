@@ -47,16 +47,28 @@ test_sphere_zero_bound_early_stop in test_pso_v3.py
 
 ## Issue 5: Rastrigin's answer is wrong
 
-- Reproduce (the command, and what it printed):
-- Expected (what, and why):
-- Hypothesis (one sentence): is the swarm stuck, or is something else wrong?
-- Confirm (an experiment of 1 to 3 lines, and what it printed):
-- Fix (the line before, and after):
-- Test (its name; it failed before the fix, and passes after):
+Reproduce: 
+python pso_v3.py rastrigin 2 20 -5.12 5.12 100 / actual output: rastrigin: best x = [0. 1.6587], f(x) = 10, iterations run: 45 (expected $f(x) = 0$ at [0, 0]).   Where: pso_v3.py, inside rastrigin: return 10 * n + sum(x[i] ** 2 - 10 * np.cos(2 * np.pi * x[i]) for i in range(n - 1))
+
+Hypothesis: 
+rastrigin loops over range(n - 1) instead of range(n), completely omitting the last coordinate x[-1] from the sum while still adding 10 * n, which leaves a constant offset of +10 and ignores x[1] during optimization.Confirm: Ran python -c "from pso_v3 import rastrigin; print('origin [0, 0]:', rastrigin([0.0, 0.0]), 'point [0, 1]:', rastrigin([0.0, 1.0]))" and it printed origin [0, 0]: 10.0 point [0, 1]: 10.0 instead of 0.0 and 1.0.   
+
+Fix: 
+In pso_v3.py inside rastrigin, changed range(n - 1) to range(n).
+
+Test: test_rastrigin_known_value_and_symmetry in test_pso_v3.py (failed with 10.0 == 0.0 before the fix; passes after).
 
 ## Three questions
 
 1. Issue 3's bug was in `pso_v3.py` from the start, yet every run and all five of Wednesday's tests
    passed. Why?
+
+   Neither pso_v3.py nor Wednesday's five unit tests ever called p.get_pbest(), accessing best.pbest directly instead, so the method went untested until report.py called it.
+
 2. Issue 4: how can the best value be exactly 0.0? Why does the same run on [-10, 10] never crash?
+
+Because xmin = 0 sits on sphere's minimum at (0, 0), particles that fly past 0 get clamped to exact 0.0 by np.clip, and 0.0**2 + 0.0**2 evaluates to exact 0.0.
+
 3. Issue 5: the user guessed a local minimum. What showed that the swarm was not stuck?
+
+Calling rastrigin([0.0, 0.0]) directly returned 10.0 instead of 0.0, and rastrigin([0.0, 1.0]) also returned 10.0 instead of 1.0. That proved the swarm actually found the true minimum on x[0] = 0 and only reported 10 because rastrigin ignored x[1] (range(n - 1)), not because the swarm was trapped in a local minimum
