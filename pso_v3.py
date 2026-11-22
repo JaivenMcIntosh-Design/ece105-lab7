@@ -43,8 +43,8 @@ class Particle:
 
     def get_pbest(self):
         """The particle's best position so far."""
-        return self.gbest
-
+        return self.pbest
+    
     def update(self, gbest):
         """One step: keep moving, plus a pull toward pbest and a pull toward gbest's best."""
         w, c1, c2 = 0.6, 1.49, 1.49
@@ -149,3 +149,8 @@ if __name__ == "__main__":
     x, value, history = run_pso(function, dim, size, xmin, xmax, max_iter)
     print(f"{function}: best x = {np.round(x, 4)}, f(x) = {value:.3g}, "
           f"iterations run: {len(history)}")
+
+def test_get_pbest():
+    """Issue 3: get_pbest raised AttributeError."""
+    p = Particle(2, -10, 10)
+    assert np.array_equal(p.get_pbest(), p.pbest)

@@ -1,17 +1,22 @@
 # Lab 7: answers
 
-Your name:
+Your name: Jaiven McIntosh
 
 For each issue, fill in Reproduce to Confirm **before** you change any code. Then fix it and test it.
 
 ## Issue 3: report.py crashes
 
-- Reproduce (the command, and the last line it printed):
-- Where (the lowest frame: file, line, and the code on that line):
+- Reproduce (the command, and the last line it printed): python report.py/ last line: 
+AttributeError: 'Particle' object has no attribute 'gbest'. Did you mean: 'pbest'?
+- Where (the lowest frame: file, line, and the code on that line): pso_v3.py, line 46 inside get_pbest , return self.gbest
 - Hypothesis (one sentence):
-- Confirm (an experiment of 1 to 3 lines, and what it printed):
+- Confirm (an experiment of 1 to 3 lines, and what it printed):article.get_pbest() in pso_v3.py mistakenly Peferences self.gbest instead of self.pbest, raising an AttributeError because individual Particle instances only store their personal best (self.pbest) rather than a global best (gbest).
 - Fix (the line before, and after; which file?):
+
+In `pso_v3.py` (line 46), changed `return self.gbest` to `return self.pbest`.
 - Test (its name; it failed before the fix, and passes after):
+
+`test_get_pbest` in `test_pso_v3.py` (failed with `AttributeError` before the fix; passes after).
 
 ## Issue 4: the sphere crashes on [0, 10]
 
@@ -19,9 +24,11 @@ For each issue, fill in Reproduce to Confirm **before** you change any code. The
 - Where (the lowest frame: file, line, and the code on that line):
 - Hypothesis (one sentence): why is the number you divide by exactly 0?
 - Confirm (an experiment of 1 to 3 lines, and what it printed):
+
 - What should the early stop do when the best value is exactly 0, and stays 0?
 - Fix (the line before, and after):
 - Test (its name; it failed before the fix, and passes after):
+
 
 ## Issue 5: Rastrigin's answer is wrong
 

@@ -38,3 +38,8 @@ def test_tie_in_the_middle():
 def test_tie_at_the_end():
     """Issue 2: a tie at the last particle gave an index past the end."""
     assert pso_get_best(swarm_with([3.0, 1.0, 1.0])) == 2
+
+def test_get_pbest():
+    """Issue 3: get_pbest raised AttributeError."""
+    p = Particle(2, -10, 10)
+    assert np.array_equal(p.get_pbest(), p.pbest)
